@@ -88,7 +88,7 @@ test("on a page switch the headings rise line by line, then go back to plain tex
 test("the logo squishes when pressed, on any page that shows it", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop", "pressing with a mouse");
   await page.goto("/about");
-  const logo = page.locator("[data-site-header] a svg");
+  const logo = page.getByRole("link", { name: brand.name }).locator("svg");
   const box = (await logo.boundingBox())!;
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   await page.mouse.down();

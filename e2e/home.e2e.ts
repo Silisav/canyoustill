@@ -304,13 +304,23 @@ test("a question's link opens the game on it, and the address follows the game f
   await expect(page).toHaveURL(/\/$/);
 });
 
-test("About covers the source, licence and privacy, and hides repo links until there's a repo", async ({ page }) => {
+test("About covers the source, licence and privacy, and links the repo once there is one", async ({ page }) => {
   await page.goto("/about");
   for (const heading of ["About", "The questions", "Licence", "Privacy"]) {
     await expect(page.getByRole("heading", { name: heading, exact: true })).toBeVisible();
   }
   await expect(page.getByText("Copyright (c) 2019 Lydia Hallie")).toBeVisible();
-  await expect(page.getByRole("link", { name: "GitHub" })).toHaveCount(0);
+  const main = page.locator("main");
+  if (brand.repoUrl) {
+    await expect(main.getByRole("link", { name: /^GitHub/ })).toHaveAttribute("href", brand.repoUrl);
+    await expect(main.getByRole("link", { name: /^contributing guide/ })).toHaveAttribute(
+      "href",
+      `${brand.repoUrl}/blob/main/CONTRIBUTING.md`,
+    );
+  } else {
+    await expect(main.getByRole("link", { name: /^GitHub/ })).toHaveCount(0);
+    await expect(main.getByRole("link", { name: /^contributing guide/ })).toHaveCount(0);
+  }
   // Lydia Hallie is credited with a link to her profile; the repo is linked by its name.
   await expect(page.locator("main").getByRole("link", { name: /^Lydia Hallie/ })).toHaveAttribute("href", "https://www.linkedin.com/in/lydia-hallie/");
   await expect(page.locator("main").getByRole("link", { name: /^javascript-questions/ })).toHaveAttribute(

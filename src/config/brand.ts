@@ -10,7 +10,7 @@ export const brand = {
   /** Canonical site URL, once there's a domain. Until then the deploy's own URL is used. */
   url: null as string | null,
   /** The GitHub repo, once it exists. Repo links (GitHub, "Add a question") render only when set. */
-  repoUrl: null as string | null,
+  repoUrl: "https://github.com/Silisav/canyoustill",
   /** Who made the site: credited in the footer. */
   maker: { name: "Vasilis Tsirimokos", url: "https://www.linkedin.com/in/vtsirimokos/" },
 };

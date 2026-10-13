@@ -4,6 +4,14 @@
   "private": true,
   "description": "Can you still read code? JavaScript questions that look easy and aren't.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Silisav/canyoustill.git"
+  },
+  "homepage": "https://github.com/Silisav/canyoustill#readme",
+  "bugs": {
+    "url": "https://github.com/Silisav/canyoustill/issues"
+  },
   "engines": {
     "node": "22.x"
   },
