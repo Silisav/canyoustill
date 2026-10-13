@@ -7,8 +7,8 @@ export const brand = {
    * descriptions, manifest). Home's lead spells it out with "Use your brain" in bold: keep them alike.
    */
   pitch: "Use your brain, choose an answer, learn why.",
-  /** Canonical site URL, once there's a domain. Until then the deploy's own URL is used. */
-  url: null as string | null,
+  /** Canonical site URL (share images, canonical links, sitemap). */
+  url: "https://canyoustill.com",
   /** The GitHub repo, once it exists. Repo links (GitHub, "Add a question") render only when set. */
   repoUrl: "https://github.com/Silisav/canyoustill",
   /** Who made the site: credited in the footer. */
