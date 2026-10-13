@@ -1,0 +1,59 @@
+---
+id: destructuring-with-rename
+title: What's the output?
+answer: D
+options:
+  A: '`"Lydia"`'
+  B: '`"myName"`'
+  C: "`undefined`"
+  D: "`ReferenceError`"
+source: upstream:lydiahallie#76
+---
+
+```javascript
+const { firstName: myName } = { firstName: 'Lydia' };
+
+console.log(firstName);
+```
+
+## Explanation
+
+By using [destructuring assignment](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment) syntax we can unpack values from arrays, or properties from objects, into distinct variables:
+
+```javascript
+const { firstName } = { firstName: 'Lydia' };
+// ES5 version:
+// var firstName = { firstName: 'Lydia' }.firstName;
+
+console.log(firstName); // "Lydia"
+```
+
+Also, a property can be unpacked from an object and assigned to a variable with a different name than the object property:
+
+```javascript
+const { firstName: myName } = { firstName: 'Lydia' };
+// ES5 version:
+// var myName = { firstName: 'Lydia' }.firstName;
+
+console.log(myName); // "Lydia"
+console.log(firstName); // Uncaught ReferenceError: firstName is not defined
+```
+
+Therefore, `firstName` does not exist as a variable, thus attempting to access its value will raise a `ReferenceError`.
+
+**Note:** Be aware of the `global scope` properties:
+
+```javascript
+const { name: myName } = { name: 'Lydia' };
+
+console.log(myName); // "lydia"
+console.log(name); // "" ----- Browser e.g. Chrome
+console.log(name); // ReferenceError: name is not defined  ----- NodeJS
+
+```
+
+Whenever Javascript is unable to find a variable within the _current scope_, it climbs up the [Scope chain](https://github.com/getify/You-Dont-Know-JS/blob/2nd-ed/scope-closures/ch3.md) and searches for it and if it reaches the top-level scope, aka **Global scope**, and still doesn't find it, it will throw a `ReferenceError`.
+
+- In **Browsers** such as _Chrome_, `name` is a _deprecated global scope property_. In this example, the code is running inside _global scope_ and there is no user-defined local variable for `name`, therefore it searches the predefined _variables/properties_ in the global scope which is in the case of browsers, it searches through `window` object and it will extract the [window.name](https://developer.mozilla.org/en-US/docs/Web/API/Window/name) value which is equal to an **empty string**.
+
+- In **NodeJS**, there is no such property on the `global` object, thus attempting to access a non-existent variable will raise a [ReferenceError](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Not_defined).

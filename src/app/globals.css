@@ -1,0 +1,264 @@
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+
+/* `dark:` follows the same rule as the palette: an explicit data-theme wins, otherwise the
+   system preference. The app only ever sets data-theme on <html>. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
+      @slot;
+    }
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-bg font-sans text-base text-fg;
+  }
+
+  button {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:disabled {
+    cursor: default;
+  }
+
+  /* The cartoon hand over things you can click, with a mouse (src/lib/cursor-image.tsx; hotspot at
+     the fingertip, HOTSPOT there). The system pointer comes back when the system asks for forced
+     colours or more contrast, where people are likeliest to rely on their own cursor settings. */
+  @media (pointer: fine) {
+    a[href],
+    button:not(:disabled),
+    summary,
+    label[for] {
+      cursor: url("/cursors/hand.png") 14 2, pointer;
+      cursor: image-set(url("/cursors/hand.png") 1x, url("/cursors/hand@2x.png") 2x) 14 2, pointer;
+    }
+  }
+  @media (forced-colors: active), (prefers-contrast: more) {
+    a[href],
+    button:not(:disabled),
+    summary,
+    label[for] {
+      cursor: pointer;
+    }
+  }
+
+  /* Selected text in the brand yellow, with the ink used on the yellow buttons (11.4:1), in both
+     themes and over highlighted code alike (AGENTS.md "Colour"). */
+  ::selection {
+    background-color: var(--c-yellow);
+    color: var(--c-yellow-ink);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--c-yellow);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+}
+
+/* Theme switch: one soft crossfade of the whole page (AGENTS.md "Motion"). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 280ms;
+}
+
+/* Reduced motion: everything instant. Motion handles its own via MotionConfig. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after,
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
+  }
+}
+
+@layer components {
+  /* Hover fill (AGENTS.md "Hover fill"): a circle of --spread grows across the button from where
+     the pointer came in (src/components/HoverSpread.tsx sets the point and the size that covers
+     the button from there; without it, the centre) and drains toward where it left. */
+  .spread {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    --spread: var(--c-card-hover);
+  }
+  .spread::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: var(--spread-x, 50%);
+    top: var(--spread-y, 50%);
+    width: var(--spread-d, 150%);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--spread);
+    translate: -50% -50%;
+    scale: 0;
+    pointer-events: none;
+    transition: scale 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  @media (hover: hover) {
+    .spread:not(:disabled):hover::before {
+      scale: 1;
+    }
+  }
+
+  /* The ↗ after a link that leaves the site (src/lib/external-link.ts). */
+  .ext {
+    display: inline-block;
+    width: 0.72em;
+    height: 0.72em;
+    margin-left: 0.2em;
+    vertical-align: 0.02em;
+    transition: translate 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  @media (hover: hover) {
+    a:hover .ext {
+      translate: 0.1em -0.1em;
+    }
+  }
+
+  /* Highlighted code from the deck bundle (classes emitted by src/lib/deck/highlight.ts). */
+  .s-kw { color: var(--c-syn-kw); }
+  .s-str { color: var(--c-syn-str); }
+  .s-num { color: var(--c-syn-num); }
+  .s-fn { color: var(--c-syn-fn); }
+  .s-cm { color: var(--c-syn-cm); font-style: italic; }
+
+  /* Inline code inside titles and options. */
+  .md-inline code {
+    @apply rounded-[6px] border-[1px] border-line bg-bg2 px-1.5 py-0.5 font-mono text-[0.92em];
+    overflow-wrap: anywhere;
+  }
+
+  /* Rendered explanation markdown. */
+  .md-prose {
+    @apply text-[16.5px] leading-[1.65];
+  }
+  .md-prose > * + * {
+    margin-top: 14px;
+  }
+  .md-prose a {
+    @apply underline decoration-mute underline-offset-2 hover:decoration-fg;
+  }
+  .md-prose b,
+  .md-prose strong {
+    @apply font-bold;
+  }
+  .md-prose ul,
+  .md-prose ol {
+    @apply pl-6;
+  }
+  .md-prose ul {
+    list-style: disc;
+  }
+  .md-prose ol {
+    list-style: decimal;
+  }
+  .md-prose :not(pre) > code {
+    @apply rounded-[6px] border-[1px] border-line bg-bg2 px-1.5 py-px font-mono text-[0.9em];
+    overflow-wrap: anywhere;
+  }
+  .md-prose pre {
+    @apply overflow-x-auto rounded-[12px] border border-line bg-bg2 p-3.5 font-mono text-[14px] leading-[1.55];
+  }
+  /* Upstream diagrams are transparent with black ink: give them a light backing in both themes. */
+  .md-prose img {
+    @apply h-auto max-w-full rounded-[12px] border border-line bg-card p-2 dark:bg-fg;
+  }
+}
+
+/* The home sample → game card morph (src/components/game/morph.ts): paired parts glide, the
+   rest crossfades. Same easing as the explanation unfold. */
+::view-transition-group(*) {
+  animation-duration: 380ms;
+  animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* After a theme switch, the icon that appears spins in (src/components/ThemeToggle.tsx). Not on
+   load: only once the toggle has been used. Same curve as the icons' hover moves (ease-pop). */
+:root[data-theme-switched] [data-theme-icon] {
+  animation: theme-icon-in 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes theme-icon-in {
+  from {
+    opacity: 0;
+    rotate: -90deg;
+    scale: 0.5;
+  }
+}
+
+/* Page switches (src/components/PageLink.tsx). The header holds still when it's on screen; the old
+   page and the new one crossfade quickly. "reveal": the new page's content waits its turn and
+   enters in reading order (src/components/reveal-lines.ts): headings rise line by line
+   (.reveal-word), other blocks fade up 10px ([data-entering]). "fade" (into the game): the whole
+   new page fades in and rises 12px. */
+:root[data-page-transition~="header-still"] [data-site-header] {
+  view-transition-name: site-header;
+}
+:root[data-page-transition]::view-transition-old(root) {
+  animation: 160ms ease-out both page-out;
+}
+:root[data-page-transition~="reveal"]::view-transition-new(root) {
+  animation: 160ms ease-out both page-in-quick;
+}
+:root[data-page-transition~="fade"]::view-transition-new(root) {
+  animation: 380ms cubic-bezier(0.2, 0.7, 0.2, 1) 80ms both page-in;
+}
+@keyframes page-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes page-in-quick {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+}
+[data-entering] {
+  animation: block-in 520ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes block-in {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+}
+
+/* A word of a heading rising from behind the foot of its line (src/components/reveal-lines.ts):
+   the clip moves against the slide, so the edge stays put while the word comes up through it. */
+.reveal-word {
+  display: inline-block;
+  animation: line-in 560ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes line-in {
+  from {
+    translate: 0 110%;
+    clip-path: inset(-0.3em -0.15em 110% -0.15em);
+  }
+  to {
+    translate: 0 0;
+    clip-path: inset(-0.3em -0.15em -0.3em -0.15em);
+  }
+}
+
+/* Returning players: the built-in sample stays hidden until the up-next card replaces it
+   (src/lib/next-up.ts), so question 2 never flashes. */
+[data-returning] [data-home-sample] {
+  visibility: hidden;
+}

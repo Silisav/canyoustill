@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Also runs as prebuild; a separate step makes content errors easy to find in the log.
+      - run: npm run validate
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e

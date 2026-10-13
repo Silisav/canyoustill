@@ -1,0 +1,48 @@
+{
+  "name": "canyoustill",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Can you still read code? JavaScript questions that look easy and aren't.",
+  "license": "MIT",
+  "engines": {
+    "node": "22.x"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "prebuild": "node scripts/validate.mjs",
+    "build": "next build",
+    "start": "next start",
+    "validate": "node scripts/validate.mjs",
+    "import": "node scripts/import-upstream.mjs",
+    "upstream:check": "node scripts/import-upstream.mjs --check",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@vercel/analytics": "2.0.1",
+    "gray-matter": "^4.0.3",
+    "idb-keyval": "^6.3.0",
+    "marked": "^18.0.14",
+    "motion": "^13.5.1",
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "shiki": "^4.5.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@serwist/turbopack": "^9.5.12",
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "esbuild": "^0.28.2",
+    "serwist": "^9.5.12",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^5.0.3"
+  }
+}
