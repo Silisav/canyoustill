@@ -32,7 +32,8 @@ Secondary: people preparing for interviews.
    and a later native wrap possible.
 4. Zero running cost. It's hosted on Vercel's free Hobby plan, which is non-commercial only: no ads,
    no sponsors.
-5. Attribution is per question, not on a credits page.
+5. Attribution is plain to see: Lydia Hallie is credited by name, with links, on home, About and in
+   the footer, and every card keeps her question's number.
 
 ### Out of scope
 
@@ -190,9 +191,9 @@ overwrites local edits to upstream text and re-downloads the original images.
 ### Licence and attribution
 
 Code: MIT ([LICENSE](LICENSE)). Questions: MIT, under upstream's notice
-([content/javascript/LICENSE](content/javascript/LICENSE)). Every card shows "Question N · see the
-original", linking to that question in Lydia Hallie's README; community questions show "Community
-question by @handle". The home page and About credit Lydia Hallie by name.
+([content/javascript/LICENSE](content/javascript/LICENSE)). Every card ends with "Question N · Share", N being
+the question's number in Lydia Hallie's README (no link on the card since 2026-10-14); community
+questions show "Community question by @handle · Share". The home page and About credit Lydia Hallie by name.
 
 ---
 
@@ -236,23 +237,31 @@ Class strings for buttons are in `src/components/buttons.ts`.
   to 40%. Options must read as buttons at a glance in both themes: test it.
 - **Code block**: `bg2`, 2px border, radius 16; a file name row for multi-file questions. **Output
   line**: monospace on `bg2`, a `> ` prompt, the value in the text colour.
+- **Links in text** (About, home's credit, the footer's credits): the text colour, underlined, never
+  bold (`textLink` in `src/components/site-type.ts`). Explanation links keep a muted underline.
 - **External links**: everything that leaves the site opens a new tab and ends in a small drawn ↗
   that nudges on hover; screen readers hear "(opens in a new tab)". The arrow stays on the line with
-  the last word. Links inside explanations get the same at build time. Icon-only links (GitHub in
-  the header) have no arrow and say it in their label. Links within the site never open a new tab.
+  the last word. Links inside explanations get the same at build time. Icon-only links, if any,
+  have no arrow and say it in their label. Links within the site never open a new tab.
 - **Logo**: a cartoon brain from the side, pink with shading, an ink outline and a cream sticker rim,
   one drawing for both themes (`src/components/Logo.tsx`). App icons are the brain on the brand
   yellow; the favicon is the brain alone. Pressing it squashes it onto its stem and it springs back,
   on every page (`src/components/LogoLink.tsx`).
-- **Wordmark**: logo and name stay on one line at every width. Below 360px both shrink a little
-  (17px and 38px at 320px) so the name fits beside the header's buttons, GitHub included
-  (`wordmark` in `src/components/site-type.ts`).
+- **Wordmark**: the logo and the name, on one line. Below 920px the brain stands alone, which keeps
+  the header and the game quiet; the name stays in the link for screen readers, visually hidden
+  (`wordmark` and `wordmarkName` in `src/components/site-type.ts`).
 - **Cursor**: over things you can click, with a mouse, a cartoon glove in the logo's style, 32px,
   hotspot at the fingertip (`src/lib/cursor-image.tsx`). The arrow and text cursors stay the
   system's. Under forced colours or "more contrast" the system pointer comes back.
-- **Share**: an icon button on the right of the game's bar, for the question on screen. With a mouse
-  it copies the `/q/` link, its icon turning into a check with a flat "Link copied" note (not a
-  toast). On touch screens it opens the system share sheet, or copies where there's none.
+- **Share**: an icon button in the header beside the theme toggle, on every site page, for the site,
+  or in the game for the question on screen (the address follows it). The share icon on
+  every device. With a mouse it copies the link, the icon turning into a check with a flat note
+  saying which link: "Question link copied" in the game, "Website link copied" elsewhere (on
+  About too, which shares the home page). Not a toast; it sits above the game's sticky bar. On
+  touch screens it opens the system share sheet, or copies where there's none. And at the end of
+  each answer, on the credit line above "Next question": a quiet "Share" on every device (the
+  sheet on touch, a copy with a mouse, then "Link copied"), for that question, where the wish to
+  share comes. Share is at least 36px tall to tap. The game's bar has none.
   `src/components/ShareButton.tsx`.
 - **All questions sheet**: a grid of numbered cells coloured by result, the current one marked. The
   order is a switch, [In order | Shuffled], so a shuffle can be undone; either way the current
@@ -270,10 +279,10 @@ Class strings for buttons are in `src/components/buttons.ts`.
   `clamp(400px, 42vw, 560px)`, with a `clamp(40px, 5vw, 80px)` gap; the card sits 16vh lower.
   About uses home's columns and type (`src/components/site-type.ts`).
 - The game is one reading column, 720px at most, under the site's own header: a slim bar sticks to
-  the top once the header scrolls away, with the counter centred (it opens All questions), share on
-  the right and a 6px progress line beneath. It fits a 320px screen without sideways scrolling.
-- Footer: the site's links on the left (About and privacy, Install the app where possible, GitHub
-  and Add a question once the repo is set), the people on the right ("Questions by" the deck's `author`
+  the top once the header scrolls away, with only the counter, centred (it opens All questions), and a
+  6px progress line beneath. It fits a 320px screen without sideways scrolling.
+- Footer: the site's links on the left (About and privacy, Install web app where possible, and GitHub
+  once the repo is set; adding a question is explained in the repo), the people on the right ("Questions by" the deck's `author`
   in `deck.json`, "Website by" `brand.maker`). On phones the credits drop below.
 - Keyboard on desktop: 1–9 or A–F answer, Enter goes on, Esc closes sheets. Hints show only from
   920px.
@@ -348,7 +357,9 @@ A faint texture behind home, About and `/q/`, mounted once in the site layout so
 page switches. The game stays plain. **Folds**: contour lines like a brain's folds in the `line`
 colour (about 1.08:1 in light, 1.11:1 in dark), 1.3 CSS pixels wide on every screen, swelling
 slightly under the pointer. Still on phones and under reduced motion; nothing without WebGL. Raw
-WebGL2, no library, loaded once the page is idle. `src/components/site/paper.ts`.
+WebGL2, no library, loaded once the page is idle. `src/components/site/paper.ts`. If the GPU takes
+its context back (phones do, switching between the installed app and the browser), the paper hides
+until it's given back; otherwise Chrome paints the lost canvas as a light placeholder over the page.
 
 ### Easter eggs
 One, for whoever opens the browser's console: an ASCII brain and a note
@@ -387,11 +398,13 @@ One, for whoever opens the browser's console: an ASCII brain and a note
   kept is answered offline with the game's shell, which reads the question from the address.
 - **Install offer**: the browser's automatic banner is suppressed. On a second visit, after at least
   five answers, a card of its own appears between two questions, once per visit
-  (`src/components/game/InstallCard.tsx`): the app icon, "Install the app", three plain lines and
-  [Install app] [Not now]. Install opens the browser's own dialog; "Not now" hides it for good;
-  Enter or a swipe carries on. Plus "Install the app" in the footer whenever the browser can install
+  (`src/components/game/InstallCard.tsx`): the app icon, "Install the web app", three plain lines and
+  [Install web app] [Not now]. Install opens the browser's own dialog; "Not now" hides it for good;
+  Enter or a swipe carries on. Plus "Install web app" in the footer ("web app", so nobody expects an app store) whenever the browser can install
   it. Only where the browser offers an install API (Chromium); nothing on iPhones, where people can
-  still use Share → Add to Home Screen. Installed, the app opens at `/`.
+  still use Share → Add to Home Screen. Installed, the app opens at `/`. On Android its launch
+  screen is the brand yellow in both themes (the manifest's `background_color`), so the icon's
+  yellow square disappears into it.
 
 ### Share images
 Rendered at build time with @vercel/og from static copies of the fonts (`src/lib/share-image.tsx`):
@@ -411,8 +424,8 @@ The name, pitch and links are written once, in `src/config/brand.ts`, and everyt
 titles, the manifest, share cards, the header, About. Never write the name in copy or components.
 - `url`: the site's address; canonical links and share images use it (until it's set, the Vercel
   deployment's own address).
-- `repoUrl`: the GitHub repo. The GitHub button, "Add a question" and other repo links appear only
-  when it's set, so no dead link ships.
+- `repoUrl`: the GitHub repo. The footer's GitHub link, home's "add a question" and About's open-source
+  paragraph appear only when it's set, so no dead link ships.
 - `maker`: credited in the footer.
 - Home's `<title>` is just the headline, "Can you still read code?", since the name is in it.
 

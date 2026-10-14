@@ -322,7 +322,7 @@ test("About covers the source, licence and privacy, and links the repo once ther
     await expect(main.getByRole("link", { name: /^contributing guide/ })).toHaveCount(0);
   }
   // Lydia Hallie is credited with a link to her profile; the repo is linked by its name.
-  await expect(page.locator("main").getByRole("link", { name: /^Lydia Hallie/ })).toHaveAttribute("href", "https://www.linkedin.com/in/lydia-hallie/");
+  await expect(page.locator("main").getByRole("link", { name: /^Lydia Hallie/ })).toHaveAttribute("href", "https://x.com/lydiahallie");
   await expect(page.locator("main").getByRole("link", { name: /^javascript-questions/ })).toHaveAttribute(
     "href",
     "https://github.com/lydiahallie/javascript-questions",
@@ -337,11 +337,29 @@ test("home, About and a long question fit a 375px phone", async ({ page }, info)
   }
 });
 
+test("on phones and tablets the header shows the brain alone; the name is still the link's name", async ({ page }, info) => {
+  await page.goto("/");
+  const logo = page.locator("[data-site-header]").getByRole("link", { name: brand.name, exact: true });
+  await expect(logo).toBeVisible();
+  const name = logo.getByText(brand.name, { exact: true });
+  const width = await name.evaluate((el) => el.getBoundingClientRect().width);
+  if (info.project.name === "phone") expect(width).toBeLessThanOrEqual(1); // visually hidden
+  else expect(width).toBeGreaterThan(100);
+});
+
+test("the home page credits Lydia Hallie by name and links her repo, and invites a question", async ({ page }) => {
+  await page.goto("/");
+  const main = page.locator("main");
+  await expect(main.getByText(/come from Lydia Hallie's javascript-questions/)).toBeVisible();
+  await expect(main.getByRole("link", { name: /^javascript-questions/ })).toHaveAttribute("href", "https://github.com/lydiahallie/javascript-questions");
+  await expect(main.getByRole("link", { name: /^add a question/ })).toHaveAttribute("href", /\/blob\/main\/CONTRIBUTING\.md$/);
+});
+
 test("the footer credits the questions and the website", async ({ page }) => {
   await page.goto("/");
   const footer = page.locator("footer");
-  await expect(footer.getByRole("link", { name: /Vasilis Tsirimokos/ })).toHaveAttribute("href", "https://www.linkedin.com/in/vtsirimokos/");
-  await expect(footer.getByRole("link", { name: /Lydia Hallie/ })).toHaveAttribute("href", "https://www.linkedin.com/in/lydia-hallie/");
+  await expect(footer.getByRole("link", { name: /Vasilis Tsirimokos/ })).toHaveAttribute("href", "https://www.vasilis-tsirimokos.com");
+  await expect(footer.getByRole("link", { name: /Lydia Hallie/ })).toHaveAttribute("href", "https://x.com/lydiahallie");
 });
 
 test("home, About and question pages share one frame: the chrome doesn't move between them", async ({ page }) => {

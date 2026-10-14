@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { brand } from "@/config/brand";
 import type { Deck, Question } from "@/lib/deck/types";
 import { arriveHome, clearHandoff, peekHandoff, ready, setFlyHome, whenReady } from "@/lib/game-handoff";
 import { writeNextUp } from "@/lib/next-up";
@@ -10,7 +9,6 @@ import { freshProgress, inDeckOrder, isInDeckOrder, shuffled, type Progress } fr
 import { loadProgress, saveProgress } from "@/lib/progress-store";
 import { ghostButton, iconMotion } from "../buttons";
 import { ChevronDownIcon } from "../icons";
-import { ShareButton } from "../ShareButton";
 import { morph } from "./morph";
 import { SLIDE_PX, animate, settle } from "./motion";
 import { useInstallOffer } from "@/lib/install";
@@ -264,12 +262,12 @@ export function Game({ deckId, initial }: { deckId: string; initial?: { question
 
   return (
     <>
-      {/* The game's bar: the counter, centred, and sharing this question, on the right, over the
-          progress line. Under the site header; once that scrolls away, the bar sticks to the top. */}
+      {/* The game's bar: the counter, centred, over the progress line. Nothing else: sharing is in
+          the header and at the end of each answer. Under the site header; once that scrolls away,
+          the bar sticks to the top. */}
       <div data-bar-anchor aria-hidden="true" />
       <div data-top-bar className="sticky top-0 z-10 mx-auto mt-4 w-full max-w-column bg-bg pt-3 pb-3 desktop:mt-6">
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 pb-3">
-          <span aria-hidden="true" />
+        <div className="flex justify-center pb-3">
           {/* The counter is the way to all questions (AGENTS.md "Layout"): where you look for
               your place is where you change it. Sized for "155 / 155" so it never jumps. */}
           <button
@@ -287,11 +285,6 @@ export function Game({ deckId, initial }: { deckId: string; initial?: { question
             )}
             <ChevronDownIcon className={`text-fg ${iconMotion} group-hover:translate-y-0.5`} />
           </button>
-          <div className="justify-self-end">
-            {current && (
-              <ShareButton path={`/q/${current.id}`} title={current.number !== null ? `Question ${current.number} · ${brand.name}` : brand.name} />
-            )}
-          </div>
         </div>
         <div
           className="h-1.5 overflow-hidden rounded-full bg-bg2"

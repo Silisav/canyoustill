@@ -3,7 +3,8 @@
 import { useEffect, useImperativeHandle, useRef, useState, type Ref } from "react";
 import type { Question } from "@/lib/deck/types";
 import { phoneWide, primaryButton } from "../buttons";
-import { ExternalLink } from "../ExternalLink";
+import { brand } from "@/config/brand";
+import { ShareButton } from "../ShareButton";
 import { CodeBlock } from "./CodeBlock";
 import { OptionButton, optionState } from "./OptionButton";
 import { OutputLine, type OutputLineHandle } from "./OutputLine";
@@ -187,17 +188,12 @@ export function QuestionCard({ question: q, result, arrival, isLast, onAnswer, o
               {verdict}
             </p>
             <div className="md-prose" dangerouslySetInnerHTML={{ __html: q.explanationHtml }} />
+            {/* The credit, the question's number in Lydia Hallie's set (AGENTS.md "Licence and
+                attribution"), then sharing this question, where the wish to share comes. */}
             <p className="mt-4 text-sm font-medium text-mute">
-              {q.number !== null && q.sourceUrl ? (
-                <>
-                  Question {q.number} ·{" "}
-                  <ExternalLink href={q.sourceUrl} className="underline underline-offset-2 hover:text-fg">
-                    see the original
-                  </ExternalLink>
-                </>
-              ) : (
-                <>Community question{q.author && <> by @{q.author}</>}</>
-              )}
+              {q.number !== null ? <>Question {q.number}</> : <>Community question{q.author && <> by @{q.author}</>}</>}
+              {" · "}
+              <ShareButton look="text" path={`/q/${q.id}`} title={q.number !== null ? `Question ${q.number} · ${brand.name}` : brand.name} />
             </p>
             {/* pb-1 and pr-1 leave room for the button's offset shadow inside the unfold's clip. */}
             <div className="mt-[26px] flex flex-wrap items-center gap-3 pr-1 pb-1">

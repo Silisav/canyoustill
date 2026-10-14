@@ -21,7 +21,9 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/",
     scope: "/",
     display: "standalone",
-    background_color: palette.light.bg,
+    // The Android splash screen: the brand yellow in both themes, the icon's own yellow, so its
+    // square disappears into it (AGENTS.md "Offline and install").
+    background_color: palette.light.yellow,
     theme_color: palette.light.bg,
     icons: Object.entries(MANIFEST_ICONS).map(([file, icon]) => ({
       src: `/icons/${file}`,

@@ -5,7 +5,7 @@
 import type { Metadata } from "next";
 import { brand } from "@/config/brand";
 import { buildDeck } from "@/lib/deck/build";
-import { body, copyTop, headline, lead, sectionTitle, siteColumns, textLink } from "@/components/site-type";
+import { body, copyTop, textLink, headline, lead, sectionTitle, siteColumns } from "@/components/site-type";
 import { HomeCta } from "@/components/home/HomeCta";
 import { HomeCard } from "@/components/home/HomeCard";
 import { ExternalLink } from "@/components/ExternalLink";
@@ -69,23 +69,27 @@ export default async function Home() {
               </p>
             </div>
             {deck.upstreamUrl && (
-              <p data-enter className="mt-6 text-[15px] leading-[1.6] text-mute">
-                The questions and explanations are{" "}
-                <ExternalLink href={deck.upstreamUrl} className={textLink}>
-                  Lydia Hallie&apos;s javascript-questions
-                </ExternalLink>
-                , used under the MIT licence. Every card links to its original.
+              // Two short paragraphs, the credit's lines balanced and no link split across lines: one
+              // long paragraph left a gap after "from" and broke "add a question" in two.
+              <div data-enter className="mt-6 space-y-1.5 text-[15px] leading-[1.6] text-balance text-mute">
+                <p>
+                  {/* One link per sentence, each named for where it goes; her profile is in the footer. */}
+                  The questions and explanations come from {deck.author?.name ?? "Lydia Hallie"}&apos;s{" "}
+                  <ExternalLink href={deck.upstreamUrl} className={textLink}>
+                    javascript-questions
+                  </ExternalLink>
+                  , used under the MIT licence.
+                </p>
                 {brand.repoUrl && (
-                  <>
-                    {" "}
-                    This app is open source:{" "}
-                    <ExternalLink href={`${brand.repoUrl}/blob/main/CONTRIBUTING.md`} className={textLink}>
+                  <p>
+                    Feel free to{" "}
+                    <ExternalLink href={`${brand.repoUrl}/blob/main/CONTRIBUTING.md`} className={`${textLink} whitespace-nowrap`}>
                       add a question
                     </ExternalLink>
-                    .
-                  </>
+                    . The app is open source.
+                  </p>
                 )}
-              </p>
+              </div>
             )}
           </section>
         </div>

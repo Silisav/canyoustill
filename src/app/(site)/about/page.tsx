@@ -66,7 +66,7 @@ export default async function AboutPage() {
           ) : (
             "javascript-questions"
           )}
-          , with fixes from its many contributors. Every card links back to its original.
+          , with fixes from its many contributors.
         </p>
         {brand.repoUrl && (
           <p data-enter className={`mt-4 ${body}`}>

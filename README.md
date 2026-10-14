@@ -15,8 +15,8 @@ a few lines of JavaScript, choose what they do, then find out why.
 
 ## The questions
 
-The questions and explanations are [Lydia Hallie's javascript-questions](https://github.com/lydiahallie/javascript-questions),
-used under the MIT licence. Every card links to its original.
+The questions and explanations are by [Lydia Hallie](https://x.com/lydiahallie), from [javascript-questions](https://github.com/lydiahallie/javascript-questions),
+used under the MIT licence.
 
 Want to add a question or fix one? See [CONTRIBUTING.md](CONTRIBUTING.md).
 
@@ -53,4 +53,4 @@ written for people and coding agents alike.
 The code is MIT, see [LICENSE](LICENSE). The questions are MIT under their original notice, see
 [content/javascript/LICENSE](content/javascript/LICENSE).
 
-Website by [Vasilis Tsirimokos](https://www.linkedin.com/in/vtsirimokos/).
+Website by [Vasilis Tsirimokos](https://www.vasilis-tsirimokos.com).

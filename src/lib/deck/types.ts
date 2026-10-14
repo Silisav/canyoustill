@@ -22,7 +22,8 @@ export interface Question {
   id: string;
   /** Upstream question number, or null for community questions. */
   number: number | null;
-  /** "See the original" link, or null for community questions. */
+  /** The question in Lydia Hallie's README, or null for community questions. Not shown on the card
+   * (2026-10-14); the weekly upstream check still verifies it. */
   sourceUrl: string | null;
   author: string | null;
   titleHtml: string;

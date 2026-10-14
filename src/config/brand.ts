@@ -12,7 +12,7 @@ export const brand = {
   /** The GitHub repo, once it exists. Repo links (GitHub, "Add a question") render only when set. */
   repoUrl: "https://github.com/Silisav/canyoustill",
   /** Who made the site: credited in the footer. */
-  maker: { name: "Vasilis Tsirimokos", url: "https://www.linkedin.com/in/vtsirimokos/" },
+  maker: { name: "Vasilis Tsirimokos", url: "https://www.vasilis-tsirimokos.com" },
 };
 
 /** Absolute base for canonical links and share images. */

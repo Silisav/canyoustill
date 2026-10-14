@@ -9,7 +9,7 @@ import { card, expectExplained, openGame, options, settled } from "./helpers";
 test.skip(({ browserName }) => browserName !== "chromium");
 test.beforeEach(({}, info) => test.skip(info.project.name !== "desktop", "keyboard-driven"));
 
-const offer = (page: Page) => card(page).getByRole("heading", { name: "Install the app" });
+const offer = (page: Page) => card(page).getByRole("heading", { name: "Install the web app" });
 
 /** Fire a fake beforeinstallprompt; its prompt() records that it was called. */
 const fireInstallEvent = (page: Page, outcome: "accepted" | "dismissed" = "accepted") =>
@@ -81,7 +81,7 @@ test("not on the first visit; on the second, after five answers, between two que
 test("Install opens the browser's dialog, then the game carries on; Not now hides it for good", async ({ page }) => {
   await firstVisit(page);
   const tab = await secondVisit(page);
-  await card(tab).getByRole("button", { name: "Install app" }).click();
+  await card(tab).getByRole("button", { name: "Install web app" }).click();
   await expect.poll(() => tab.evaluate(() => (window as unknown as { prompted?: boolean }).prompted)).toBe(true);
   await settled(tab);
   await expect(offer(tab)).toHaveCount(0);
@@ -98,8 +98,8 @@ test("Install opens the browser's dialog, then the game carries on; Not now hide
   await expect(offer(fourth)).toHaveCount(0);
 });
 
-test("the footer's Install the app: whenever the browser can install, even after Not now; gone once installed", async ({ page }) => {
-  const link = page.locator("footer").getByRole("button", { name: "Install the app" });
+test("the footer's Install web app: whenever the browser can install, even after Not now; gone once installed", async ({ page }) => {
+  const link = page.locator("footer").getByRole("button", { name: "Install web app" });
   await page.goto("/");
   await expect(link).toHaveCount(0); // the browser hasn't offered anything
   await fireInstallEvent(page);

@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { brand } from "@/config/brand";
 import { Logo } from "@/components/Logo";
 import { primaryButton } from "@/components/buttons";
-import { copyTop, headline, lead, wordmark, wordmarkLogo } from "@/components/site-type";
+import { copyTop, headline, lead, wordmark, wordmarkLogo, wordmarkName } from "@/components/site-type";
 
 export const metadata: Metadata = { title: `Not found · ${brand.name}` };
 
@@ -15,7 +15,7 @@ export default function NotFound() {
       <header className="flex pt-[22px] desktop:pt-7">
         <a href="/" className={wordmark}>
           <Logo className={wordmarkLogo} />
-          {brand.name}
+          <span className={wordmarkName}>{brand.name}</span>
         </a>
       </header>
       <main className={`${copyTop} pb-24`}>

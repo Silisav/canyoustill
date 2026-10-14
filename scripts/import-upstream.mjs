@@ -31,7 +31,7 @@ const DECK_DEFAULTS = {
   name: "JavaScript",
   description: "Lydia Hallie's JavaScript questions, from lydiahallie/javascript-questions.",
   licence: "MIT",
-  author: { name: "Lydia Hallie", url: "https://www.linkedin.com/in/lydia-hallie/" },
+  author: { name: "Lydia Hallie", url: "https://x.com/lydiahallie" },
 };
 const DECK_DIR = join(CONTENT_DIR, "javascript");
 const DECK_PATH = join(DECK_DIR, "deck.json");

@@ -32,7 +32,7 @@ test("links that leave the site open a new tab, with the arrow and a word for sc
     for (const l of links) {
       expect(l.target, `${path} ${l.href}`).toBe("_blank");
       expect(l.rel, `${path} ${l.href}`).toContain("noopener");
-      // Icon-only links (GitHub in the header) have no arrow; text links do (AGENTS.md "External links").
+      // Icon-only links have no arrow; text links do (AGENTS.md "External links").
       expect(l.arrow, `${path} ${l.href}`).toBe(!l.iconOnly);
       expect(l.says, `${path} ${l.href}`).toContain("(opens in a new tab)");
     }

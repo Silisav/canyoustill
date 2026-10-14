@@ -19,7 +19,7 @@ export function InstallCard({ total, onInstall, onDecline }: { total: number; on
       <div className="flex items-center gap-4">
         <AppIcon className="size-12 shrink-0" />
         <h1 ref={title} tabIndex={-1} className="text-[30px] leading-[1.1] font-extrabold tracking-headline outline-none">
-          Install the app
+          Install the web app
         </h1>
       </div>
       <ul className="mt-4 max-w-[46ch] list-disc space-y-2 pl-5 text-[17px] leading-[1.5] font-medium text-mute">
@@ -29,7 +29,7 @@ export function InstallCard({ total, onInstall, onDecline }: { total: number; on
       </ul>
       <div className="mt-8 flex flex-wrap items-center gap-3 pr-1 pb-1">
         <button type="button" className={`${primaryButton} ${phoneWide}`} onClick={onInstall}>
-          Install app
+          Install web app
         </button>
         <button type="button" className={`${ghostButton} ${phoneWide} desktop:self-stretch`} onClick={onDecline}>
           Not now

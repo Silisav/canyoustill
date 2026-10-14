@@ -73,6 +73,8 @@ test("installable by Chrome's own criteria, with a complete manifest", async ({ 
 
   const manifest = await (await page.request.get("/manifest.webmanifest")).json();
   expect(manifest).toMatchObject({ start_url: "/", scope: "/", display: "standalone", name: expect.any(String) });
+  // Android's launch screen: the brand yellow, the icon's own, so its square disappears into it.
+  expect(manifest.background_color).toBe("#F6C644");
   const purposes = manifest.icons.map((i: { sizes: string; purpose: string }) => `${i.sizes} ${i.purpose}`);
   expect(purposes).toEqual(["192x192 any", "512x512 any", "512x512 maskable"]);
   for (const icon of manifest.icons) {

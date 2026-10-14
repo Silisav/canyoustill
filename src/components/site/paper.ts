@@ -74,14 +74,21 @@ function program(gl: WebGL2RenderingContext): WebGLProgram | null {
 function folds(): () => void {
   const canvas = document.createElement("canvas");
   const gl = canvas.getContext("webgl2", { antialias: false });
-  const prog = gl && program(gl);
-  if (!gl || !prog) return () => {}; // no WebGL: the plain page
-  gl.useProgram(prog);
-  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-  gl.enableVertexAttribArray(0);
-  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-  const u = Object.fromEntries(["res", "dpr", "scroll", "ptr", "amp", "ink", "lift"].map((k) => [k, gl.getUniformLocation(prog, k)]));
+  if (!gl) return () => {}; // no WebGL: the plain page
+  // The program and its inputs: built at the start, and again if the GPU gives back a lost context.
+  const setUp = () => {
+    const prog = program(gl);
+    if (!prog) return null;
+    gl.useProgram(prog);
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+    return Object.fromEntries(["res", "dpr", "scroll", "ptr", "amp", "ink", "lift"].map((k) => [k, gl.getUniformLocation(prog, k)]));
+  };
+  const first = setUp();
+  if (!first) return () => {};
+  let u = first;
 
   canvas.setAttribute("aria-hidden", "true");
   canvas.className = "pointer-events-none fixed inset-0 -z-10 size-full opacity-0 transition-opacity duration-700";
@@ -152,6 +159,24 @@ function folds(): () => void {
     readInk();
     draw();
   };
+  // Phones take the GPU back from pages they set aside (switching between the installed app and
+  // the browser does it). Chrome then shows the lost canvas as a light placeholder over the whole
+  // page, so hide it: the plain page shows until the context comes back, if it does.
+  const onLost = (e: Event) => {
+    e.preventDefault(); // lets the browser give the context back
+    cancelAnimationFrame(frame);
+    frame = 0;
+    canvas.hidden = true;
+  };
+  const onRestored = () => {
+    const again = setUp();
+    if (!again) return;
+    u = again;
+    readInk();
+    size();
+    draw();
+    canvas.hidden = false;
+  };
 
   readInk();
   size();
@@ -164,6 +189,8 @@ function folds(): () => void {
     addEventListener("pointermove", onMove, { passive: true });
     document.documentElement.addEventListener("pointerleave", onLeave);
   }
+  canvas.addEventListener("webglcontextlost", onLost);
+  canvas.addEventListener("webglcontextrestored", onRestored);
   const themes = new MutationObserver(onTheme);
   themes.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   const system = matchMedia("(prefers-color-scheme: dark)");
@@ -177,6 +204,8 @@ function folds(): () => void {
     document.documentElement.removeEventListener("pointerleave", onLeave);
     themes.disconnect();
     system.removeEventListener("change", onTheme);
+    canvas.removeEventListener("webglcontextlost", onLost);
+    canvas.removeEventListener("webglcontextrestored", onRestored);
     gl.getExtension("WEBGL_lose_context")?.loseContext();
     canvas.remove();
   };

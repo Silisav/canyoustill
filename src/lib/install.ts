@@ -102,7 +102,7 @@ export function useInstallOffer(answered: number) {
 }
 
 /**
- * The footer's "Install the app" (AGENTS.md "Offline and install"): there whenever the browser can install the app,
+ * The footer's "Install web app" (AGENTS.md "Offline and install"): there whenever the browser can install the app,
  * also after "Not now" (clicking it is the player's own choice); gone once it's installed, inside
  * the installed app, and wherever the browser has no install API (iPhones).
  */

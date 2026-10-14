@@ -53,6 +53,25 @@ test("the paper is on every site page, stays put across a page switch, and the g
   await expect(page.locator("body > canvas")).toHaveCount(0);
 });
 
+test("if the phone takes the paper's GPU context, the paper hides, and it comes back with the context", async ({ page }) => {
+  await page.goto("/");
+  const webgl = await page.evaluate(() => !!document.createElement("canvas").getContext("webgl2"));
+  test.skip(!webgl, "no WebGL2 here: the pages are plain, by design");
+  const paper = page.locator("body > canvas");
+  await expect(paper).toHaveCount(1, { timeout: 5000 });
+  // What a phone does to a page it sets aside, done on purpose (AGENTS.md "Background"). The
+  // switch is kept from before: a lost context hands out no extensions.
+  type Switch = { gpu: WEBGL_lose_context };
+  await paper.evaluate((el) => {
+    (window as unknown as Switch).gpu = (el as HTMLCanvasElement).getContext("webgl2")!.getExtension("WEBGL_lose_context")!;
+    (window as unknown as Switch).gpu.loseContext();
+  });
+  await expect(paper).toBeHidden();
+  await page.evaluate(() => (window as unknown as Switch).gpu.restoreContext());
+  await expect(paper).toBeVisible();
+  expect(await paper.evaluate((el) => (el as HTMLCanvasElement).getContext("webgl2")!.isContextLost())).toBe(false);
+});
+
 test("on a page switch the headings rise line by line, then go back to plain text", async ({ page }) => {
   await page.goto("/about");
   await page.locator("[data-site-header]").getByRole("link", { name: brand.name }).click();
